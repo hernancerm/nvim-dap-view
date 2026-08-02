@@ -19,10 +19,13 @@ api.nvim_create_autocmd({ "WinClosed", "WinNew" }, {
                 -- Resize when closing unrelated windows (#190)
                 -- We assume that keeping the original size is more important than recalculating
                 -- (if the size was a function)
-                if state.og_height then
+                --
+                -- The size is only restored when another window can give up the space: the user may
+                -- have rearranged the windows since, and the original size can no longer apply
+                if state.og_height and window.can_resize(state.winnr, "height") then
                     api.nvim_win_set_height(state.winnr, state.og_height)
                 end
-                if state.og_width then
+                if state.og_width and window.can_resize(state.winnr, "width") then
                     api.nvim_win_set_width(state.winnr, state.og_width)
                 end
             end
